@@ -1,0 +1,5 @@
+steps/MDK-ARM/steps/
+steps/MDK-ARM/RTE/
+steps/MDK-ARM/DebugConfig/
+steps/MDK-ARM/steps.uvguix.*
+steps/MDK-ARM/startup_stm32f407xx.lst
