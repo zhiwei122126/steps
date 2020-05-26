@@ -114,11 +114,14 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   char * hello = "hello_zhiwei\r\n";
+  uint8_t recv_buf[10];
   for(;;)
   {
     //MX_USART1_Send((uint8_t*)hello, sizeof(hello));
     osDelay(100);
     MX_USART1_Send((uint8_t*)hello,  14);
+    MX_USART1_Recv(&recv_buf[0],10);
+    MX_USART1_Send(&recv_buf[0],10);
   }
   /* USER CODE END StartDefaultTask */
 }
