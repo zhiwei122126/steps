@@ -22,8 +22,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
-#include "cmsis_os2.h"
-#include "usart.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
@@ -132,7 +131,7 @@ void StartDefaultTask(void *argument)
             break;
         }
     }while(recv_buf[0] != '\n' && recv_buf[0] != '\r');
-    // putty 只发送\r ，有些发送\r\n 有些只发送 \n。
+    // putty 只发送\r ，有些发送\r\n 有些只发�? \n�?
     if(recv_buf[0] == '\r'){
         char * tmp = "\n";
         MX_USART1_Send((uint8_t*)tmp,1);

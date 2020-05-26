@@ -19,16 +19,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
-#include "cmsis_os2.h"
-
-UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN 0 */
-/*利用中断触发的方式使用串口通信。
-  比起直接使用 阻塞模式的 下面两个API 
+/*利用中断触发的方式使用串口�?�信�?
+  比起直接使用 阻塞模式�? 下面两个API 
         (+) HAL_UART_Transmit()
         (+) HAL_UART_Receive()
-中断模式的可以  check and delay 来让出CPU 供其他任务使用
+中断模式的可�?  check and delay 来让出CPU 供其他任务使�?
         (+) HAL_UART_Transmit_IT()
         (+) HAL_UART_Receive_IT()
         (+) HAL_UART_IRQHandler()
@@ -110,6 +107,9 @@ void MX_UART1_mutex_init()
 }
 
 /* USER CODE END 0 */
+
+UART_HandleTypeDef huart1;
+
 /* USART1 init function */
 
 void MX_USART1_UART_Init(void)
