@@ -113,15 +113,31 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-  char * hello = "hello_zhiwei\r\n";
+  char * hello = "input cmd:\r\n";
   uint8_t recv_buf[10];
+  uint8_t one_line[256];
   for(;;)
   {
     //MX_USART1_Send((uint8_t*)hello, sizeof(hello));
-    osDelay(100);
+    //osDelay(100);
     MX_USART1_Send((uint8_t*)hello,  14);
-    MX_USART1_Recv(&recv_buf[0],10);
-    MX_USART1_Send(&recv_buf[0],10);
+    int ii = 0;
+    do{
+        MX_USART1_Recv(&recv_buf[0],1);
+        MX_USART1_Send(&recv_buf[0],1);
+        one_line[ii] = recv_buf[0];
+        ++ii;
+        if(ii == 256){
+            break;
+        }
+    }while(recv_buf[0] != '\n' && recv_buf[0] != '\r');
+    // putty 只发送\r ，有些发送\r\n 有些只发送 \n。
+    if(recv_buf[0] == '\r'){
+        char * tmp = "\n";
+        MX_USART1_Send((uint8_t*)tmp,1);
+        one_line[ii] = '\n';
+    }
+    // todo: post one_line to app level.
   }
   /* USER CODE END StartDefaultTask */
 }
