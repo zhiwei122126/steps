@@ -111,6 +111,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
+char one_line[1024];
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
