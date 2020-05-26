@@ -21,6 +21,9 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+
+#include "cmsis_os2.h"
+
 /*利用中断触发的方式使用串口�?�信�?
   比起直接使用 阻塞模式�? 下面两个API 
         (+) HAL_UART_Transmit()

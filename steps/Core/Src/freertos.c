@@ -26,6 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
+#include "cmsis_os2.h"
+#include "usart.h"
 
 /* USER CODE END Includes */
 
@@ -109,20 +111,21 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
+char one_line[1024];
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   char * hello = "input cmd:\r\n";
   uint8_t recv_buf[10];
-  char one_line[512];
+  
   for(;;)
   {
     //MX_USART1_Send((uint8_t*)hello, sizeof(hello));
     //osDelay(100);
     MX_USART1_Send((uint8_t*)hello,  14);
     int ii = 0;
-    memset(one_line,0,512);
+    memset(one_line,0,256);
     do{
         MX_USART1_Recv(&recv_buf[0],1);
         MX_USART1_Send(&recv_buf[0],1);
@@ -139,9 +142,10 @@ void StartDefaultTask(void *argument)
         one_line[ii] = '\n';
     }
     if(strcmp(one_line,"tasklist\r\n") == 0){
-        memset(one_line,0,512);
+        memset(one_line,0,1024);
         vTaskList((char *) one_line);
         MX_USART1_Send(&one_line[0],strlen(one_line));
+        memset(one_line,0,1024);
     }
     // todo: post one_line to app level.
   }
