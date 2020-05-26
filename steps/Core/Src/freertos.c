@@ -115,13 +115,14 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   char * hello = "input cmd:\r\n";
   uint8_t recv_buf[10];
-  uint8_t one_line[256];
+  char one_line[512];
   for(;;)
   {
     //MX_USART1_Send((uint8_t*)hello, sizeof(hello));
     //osDelay(100);
     MX_USART1_Send((uint8_t*)hello,  14);
     int ii = 0;
+    memset(one_line,0,512);
     do{
         MX_USART1_Recv(&recv_buf[0],1);
         MX_USART1_Send(&recv_buf[0],1);
@@ -136,6 +137,11 @@ void StartDefaultTask(void *argument)
         char * tmp = "\n";
         MX_USART1_Send((uint8_t*)tmp,1);
         one_line[ii] = '\n';
+    }
+    if(strcmp(one_line,"tasklist\r\n") == 0){
+        memset(one_line,0,512);
+        vTaskList((char *) one_line);
+        MX_USART1_Send(&one_line[0],strlen(one_line));
     }
     // todo: post one_line to app level.
   }
