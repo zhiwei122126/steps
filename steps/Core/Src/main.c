@@ -20,7 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -99,10 +99,10 @@ int main(void)
  
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
- 
+  MX_UART1_mutex_init();
   /* Start scheduler */
   osKernelStart();
- 
+  /* 不要关系下面的while 1 循环。正常运行时，osKernelStart() 永远不会返回的。如果返回，说明软件系统已经奔溃了*/
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */

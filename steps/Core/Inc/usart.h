@@ -40,6 +40,10 @@ void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 
+void MX_UART1_mutex_init();
+void MX_USART1_Recv(uint8_t *pData, uint16_t Size);
+void MX_USART1_Send(uint8_t *pData, uint16_t Size);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

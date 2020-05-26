@@ -19,13 +19,97 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
-
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
+#include "cmsis_os2.h"
 
 UART_HandleTypeDef huart1;
 
+/* USER CODE BEGIN 0 */
+/*利用中断触发的方式使用串口通信。
+  比起直接使用 阻塞模式的 下面两个API 
+        (+) HAL_UART_Transmit()
+        (+) HAL_UART_Receive()
+中断模式的可以  check and delay 来让出CPU 供其他任务使用
+        (+) HAL_UART_Transmit_IT()
+        (+) HAL_UART_Receive_IT()
+        (+) HAL_UART_IRQHandler()
+*/
+
+static char   send_complete = 0;
+static char   recv_complete = 0;
+static char   uart_error_occurs = 0;
+
+static osMutexId_t uart1_send_mutex_id = NULL;  
+static osMutexId_t uart1_recv_mutex_id = NULL;  
+ 
+const osMutexAttr_t Thread_Mutex_attr = {
+  "uart1Mutex",                          // human readable mutex name
+  osMutexPrioInherit,    // attr_bits
+  NULL,                                     // memory for control block   
+  0U                                        // size for control block
+};
+
+void MX_USART1_Send(uint8_t *pData, uint16_t Size)
+{
+    if (uart1_send_mutex_id == NULL) {
+        // todo: mutex id init error
+    }
+    osStatus_t status = osMutexAcquire(uart1_send_mutex_id, 0U);
+    if (status != osOK)  {
+        // mutex acquire error . handle failure code
+    }
+    if(uart_error_occurs){
+        return;
+    }
+    send_complete = 0;
+    HAL_UART_Transmit_IT(&huart1,pData,Size);
+    while(0 == send_complete && 0 == uart_error_occurs){
+        osDelay(1);
+    }
+
+    status = osMutexRelease(uart1_send_mutex_id);
+    if (status != osOK)  {
+        // mutex release error, handle failure code
+    }
+}
+
+void MX_USART1_Recv(uint8_t *pData, uint16_t Size)
+{
+    if (uart1_recv_mutex_id == NULL) {
+        // mutex id init error
+    }
+    osStatus_t status = osMutexAcquire(uart1_recv_mutex_id, 0U);
+    if (status != osOK)  {
+        // mutex acquire error . handle failure code
+    }
+    if(uart_error_occurs){
+        return;
+    }
+    recv_complete = 0;
+    HAL_UART_Receive_IT(&huart1,pData,Size);
+    while(0 == recv_complete && 0 == uart_error_occurs){
+        osDelay(1);
+    }
+
+    status = osMutexRelease(uart1_recv_mutex_id);
+    if (status != osOK)  {
+        // mutex release error, handle failure code
+    }
+}
+
+void MX_UART1_mutex_init()
+{
+    uart1_send_mutex_id = osMutexNew(NULL);
+    if (uart1_send_mutex_id == NULL) {
+        // todo: send mutex create error. 
+    }
+
+    uart1_recv_mutex_id = osMutexNew(NULL);
+    if (uart1_recv_mutex_id == NULL) {
+        // todo: recv mutex create error. 
+    }
+}
+
+/* USER CODE END 0 */
 /* USART1 init function */
 
 void MX_USART1_UART_Init(void)
@@ -116,7 +200,9 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-    // 被中断处理调用，发�?�完成�??
+    // 被中断处理调用，
+
+    ++send_complete; 
 }
 
 
@@ -128,7 +214,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
   */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    // 被中断处理函数调用，接收完成�?
+    // 被中断处理函数调用，接收完成
+    ++recv_complete ;
 }
 
 
@@ -140,8 +227,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   */
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-    // 被中断处理函数调用�?�串口硬件模�? 触发中断 告诉CPU它有错误啦！
-    // 重新初始化它，或者停止使用它�?
+    // 被中断处理函数调用串口硬件模  触发中断 告诉CPU它有错误啦！
+    // 重新初始化它，或者停止使用它?
+    ++uart_error_occurs;
 }
 
 /* USER CODE END 1 */

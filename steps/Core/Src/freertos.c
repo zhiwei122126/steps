@@ -23,6 +23,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os2.h"
+#include "usart.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
@@ -112,9 +113,12 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+  char * hello = "hello_zhiwei\r\n";
   for(;;)
   {
-    osDelay(1);
+    //MX_USART1_Send((uint8_t*)hello, sizeof(hello));
+    osDelay(100);
+    MX_USART1_Send((uint8_t*)hello,  14);
   }
   /* USER CODE END StartDefaultTask */
 }
