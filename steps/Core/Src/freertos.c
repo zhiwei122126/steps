@@ -29,6 +29,8 @@
 #include "cmsis_os2.h"
 #include "usart.h"
 
+#include "tcp_server.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -144,6 +146,9 @@ char one_line[1024];
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+    
+    // 启动网络服务器。
+    tcp_server_init();
   /* Infinite loop */
   char * hello = "input cmd:\r\n";
   uint8_t recv_buf[10];
